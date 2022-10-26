@@ -1,0 +1,8 @@
+.ok_history
+.ok_message
+.ok_storage.bak
+.ok_storage.dat
+.ok_storage.dir
+.ok_messages
+__pycache__
+*.pyc
