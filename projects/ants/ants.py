@@ -52,6 +52,7 @@ class Insect:
 
     damage = 0
     # ADD CLASS ATTRIBUTES HERE
+    is_watersafe = False
 
     def __init__(self, armor, place=None):
         """Create an Insect with an ARMOR amount and a starting PLACE."""
@@ -330,27 +331,39 @@ class Water(Place):
         its armor to 0."""
         # BEGIN Problem 8
         "*** YOUR CODE HERE ***"
+        Place.add_insect(self, insect)
+        if insect.is_watersafe == False:
+            insect.reduce_armor(insect.armor)
         # END Problem 8
 
 # BEGIN Problem 9
 # The ScubaThrower class
+class ScubaThrower(ThrowerAnt):
+    name = 'Scuba'
+    is_watersafe = True
+    food_cost = 6
+    implemented = True
 # END Problem 9
 
 # BEGIN Problem EC
-class QueenAnt(Ant):  # You should change this line
+class QueenAnt(ScubaThrower):  # You should change this line
 # END Problem EC
     """The Queen of the colony. The game is over if a bee enters her place."""
 
     name = 'Queen'
     food_cost = 7
+    appearance = 0
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem EC
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem EC
 
     def __init__(self, armor=1):
         # BEGIN Problem EC
         "*** YOUR CODE HERE ***"
+        ScubaThrower.__init__(self, armor)
+        QueenAnt.appearance += 1
+        self.is_True_Queen = QueenAnt.appearance == 1
         # END Problem EC
 
     def action(self, gamestate):
@@ -361,6 +374,17 @@ class QueenAnt(Ant):  # You should change this line
         """
         # BEGIN Problem EC
         "*** YOUR CODE HERE ***"
+        if not self.is_True_Queen:
+            self.reduce_armor(self.armor)
+            return
+        ThrowerAnt.action(self, gamestate)
+        present = self.place.exit
+        while present != None:
+            if present.ant != None:
+                if not hasattr(present.ant, 'is_doubled'):
+                    present.ant.damage *= 2
+                    present.ant.is_doubled = True
+            present = present.exit
         # END Problem EC
 
     def reduce_armor(self, amount):
@@ -369,6 +393,18 @@ class QueenAnt(Ant):  # You should change this line
         """
         # BEGIN Problem EC
         "*** YOUR CODE HERE ***"
+        if self.is_True_Queen == True:
+            if amount >= self.armor:
+                bees_win()
+            else:
+                Ant.reduce_armor(self, amount)
+        else:
+            Ant.reduce_armor(self, amount)
+    
+    def remove_from(self, place):
+        if self.is_True_Queen:
+            return
+        return super().remove_from(place)
         # END Problem EC
 
 
@@ -388,6 +424,7 @@ class Bee(Insect):
     name = 'Bee'
     damage = 1
     # OVERRIDE CLASS ATTRIBUTES HERE
+    is_watersafe = True
 
 
     def sting(self, ant):
