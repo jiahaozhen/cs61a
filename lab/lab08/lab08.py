@@ -8,6 +8,17 @@ def convert_link(link):
     []
     """
     "*** YOUR CODE HERE ***"
+    #recursive
+    # if link == Link.empty:
+    #     return []
+    # return [link.first] + convert_link(link.rest)
+
+    #iterative
+    return_list = []
+    while link is not Link.empty:
+        return_list.append(link.first)
+        link = link.rest
+    return return_list
 
 
 def every_other(s):
@@ -28,6 +39,13 @@ def every_other(s):
     Link(4)
     """
     "*** YOUR CODE HERE ***"
+    flag = True
+    while s.rest is not Link.empty:
+        if flag:
+            s.rest = s.rest.rest
+        else:
+            s = s.rest
+        flag = not flag
 
 
 def cumulative_mul(t):
@@ -40,7 +58,23 @@ def cumulative_mul(t):
     Tree(105, [Tree(15, [Tree(5)]), Tree(7)])
     """
     "*** YOUR CODE HERE ***"
+    for b in t.branches:
+        cumulative_mul(b)
+        t.label *= b.label
+#     t.label = helper(t)
+#     for branch in t.branches:
+#         cumulative_mul(branch)
 
+
+# def helper(t):
+#     if t.is_leaf():
+#         return t.label
+#     else:
+#         new_branch_label = [helper(branch) for branch in t.branches]
+#         mul = t.label
+#         for i in range(len(new_branch_label)):
+#             mul *= new_branch_label[i]
+#         return mul
 
 def has_cycle(link):
     """Return whether link contains a cycle.
@@ -57,6 +91,15 @@ def has_cycle(link):
     False
     """
     "*** YOUR CODE HERE ***"
+    exist = []
+    exist.append(link)
+    while link.rest is not Link.empty:
+        if link.rest in exist:
+            return True
+        else:
+            exist.append(link.rest)
+            link = link.rest
+    return False
 
 def has_cycle_constant(link):
     """Return whether link contains a cycle.
@@ -70,6 +113,14 @@ def has_cycle_constant(link):
     False
     """
     "*** YOUR CODE HERE ***"
+    #answer from someone else
+    rabbit, turtle = link, link
+    while rabbit.rest is not Link.empty and rabbit.rest.rest is not Link.empty:
+        rabbit = rabbit.rest.rest
+        turtle = turtle.rest
+        if rabbit is turtle:
+            return True
+    return False
 
 
 def reverse_other(t):
@@ -86,6 +137,13 @@ def reverse_other(t):
     Tree(1, [Tree(8, [Tree(3, [Tree(5), Tree(4)]), Tree(6, [Tree(7)])]), Tree(2)])
     """
     "*** YOUR CODE HERE ***"
+    branch_num = len(t.branches)
+    for i in range(branch_num//2):
+        t.branches[i].label, t.branches[branch_num-1-i].label =\
+        t.branches[branch_num-1-i].label, t.branches[i].label
+    for branch in t.branches:
+        for sub_branch in branch.branches:
+            reverse_other(sub_branch)
 
 
 class Link:
