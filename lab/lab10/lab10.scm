@@ -1,5 +1,8 @@
 (define (over-or-under num1 num2)
   'YOUR-CODE-HERE
+  (cond  ((< num1 num2) -1)
+          ((= num1 num2) 0)
+          ((> num1 num2) 1))
 )
 
 ;;; Tests
@@ -13,6 +16,8 @@
 
 (define (make-adder num)
   'YOUR-CODE-HERE
+  (define adder (lambda (n) (+ n num)))
+  adder
 )
 
 ;;; Tests
@@ -23,16 +28,29 @@
 
 (define (composed f g)
   'YOUR-CODE-HERE
+  (define (h x)
+    (f (g x)))
+  h
 )
 
 
 (define lst
-  'YOUR-CODE-HERE
+  (list (list 1) 2 (list 3 4) 5)
 )
 
 
 (define (remove item lst)
-  'YOUR-CODE-HERE
+  (filter-lst (lambda (x) (= x item)) lst)
+)
+
+(define (filter-lst fn lst)
+    (if (null? lst)
+        nil ; should not use (nil)
+        (if (fn (car lst))
+            (filter-lst fn (cdr lst))
+            (cons (car lst) (filter-lst fn (cdr lst)))
+        )
+    )
 )
 
 
